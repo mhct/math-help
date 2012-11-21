@@ -19,7 +19,17 @@ public enum Operation {
 		public String toString() {
 			return "-";
 		}
+	}, MULTIPLICATION {
+		@Override
+		public int calculate(int a, int b) {
+			return a * b;
+		}
+		
+		public String toString() {
+			return "*";
+		}
 	};
+	
 	
 	abstract public int calculate(int a, int b); 
 }
