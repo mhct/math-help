@@ -121,7 +121,9 @@ public class MainActivity extends Activity {
      */
     private void animationRightAnswer() {
     	rating.setRating(rating.getRating()+1.0f);
-    	if(rating.getRating()>=20 && noMistakes() ) {
+//    	if(rating.getRating()>=1 && noMistakes() ) {
+    	
+    	if(rating.getRating()>=1) {
     		Intent intent = new Intent(this, CongratulationsActivity.class);
     		startActivity(intent);
     	}

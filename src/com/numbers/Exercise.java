@@ -72,10 +72,10 @@ public class Exercise implements Serializable {
 		}
 		
 		if(operation == Operation.SUBTRACTION) { 
-			a = random.nextInt(10, 17);
-			b = random.nextInt(5, 10);
-		} else {
-			a = random.nextInt(8, 9);
+			a = random.nextInt(10, 100);
+			b = random.nextInt(0, a);
+		} else if (operation == Operation.MULTIPLICATION) {
+			a = random.nextInt(6, 9);
 			b = random.nextInt(0, 10);
 			
 			if (random.nextUniform(0.0, 1.0) <= 0.5) {
@@ -83,6 +83,9 @@ public class Exercise implements Serializable {
 				a = b;
 				b = temp;
 			}
+		} else {
+			a = random.nextInt(0, 100);
+			b = random.nextInt(0, 100 - a);
 		}
 		
 		Exercise ex = new Exercise(a, b, operation);
