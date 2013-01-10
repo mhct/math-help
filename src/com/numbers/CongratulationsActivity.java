@@ -18,7 +18,7 @@ public class CongratulationsActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_congratulations);
 		
-		String congratulationsImageAddress = "https://dl.dropbox.com/u/4294426/baloons.jpg";
+		String congratulationsImageAddress = "https://dl.dropbox.com/u/4294426/baloons.png";
 		Log.d("Numbers", "porra A");
 		ImageView congratulationImage = (ImageView) findViewById(R.id.imageView1);
 		ImageService.newInstance(congratulationsImageAddress, congratulationImage).loadImage();
