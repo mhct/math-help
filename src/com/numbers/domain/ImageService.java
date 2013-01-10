@@ -44,7 +44,7 @@ public class ImageService extends AsyncTask<URL, Void, Bitmap> {
 			if(is == null)
 				Log.d("Numbers", "is is Null");
 			
-			image = BitmapFactory.decodeStream(is, null, options);
+			image = BitmapFactory.decodeStream(is);
 			
 			if(image == null) {
 				Log.d("Numbers", "image is null.. why????");
@@ -68,13 +68,12 @@ public class ImageService extends AsyncTask<URL, Void, Bitmap> {
 	
 	protected void onPostExecute (Bitmap result) {
 		Log.d("Numbers", "post result called ");
-		if(result == null) {
+
+		if(result != null) {
+			view.setImageBitmap(result);
+		} else {
 			Log.d("Numbers", "result foi NULO PORRA");
 		}
-		
-		
-		view.setImageBitmap(result);
-//		view.setVisibility(View.VISIBLE);
 	}
 	
 	public static ImageService newInstance(String serverURL, ImageView view) {
