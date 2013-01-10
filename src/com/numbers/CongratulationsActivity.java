@@ -1,17 +1,13 @@
 package com.numbers;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URL;
-
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
-import android.widget.ImageButton;
+import android.widget.ImageView;
+
+import com.numbers.domain.ImageService;
 
 public class CongratulationsActivity extends Activity {
 	/**
@@ -20,27 +16,13 @@ public class CongratulationsActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		URL url;
-		try {
-			url = new URL("https://dl.dropbox.com/u/4294426/photo1.png");
-			setContentView(R.layout.activity_congratulations);
-			ImageButton button = (ImageButton) findViewById(R.id.imageButton1);
-			BitmapFactory.Options options = new BitmapFactory.Options();
-			options.inJustDecodeBounds = true;
-			button.setImageBitmap(BitmapFactory.decodeStream(url.openStream(), null, options));
-			
-			button.setVisibility(View.VISIBLE);
-		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		setContentView(R.layout.activity_congratulations);
 		
-		
-//		Intent intent = getIntent();
-//		String message = intent.getStringExtra(MainActivity.EXTRA_MESSAGE);
+		String congratulationsImageAddress = "https://dl.dropbox.com/u/4294426/baloons.jpg";
+		Log.d("Numbers", "porra A");
+		ImageView congratulationImage = (ImageView) findViewById(R.id.imageView1);
+		ImageService.newInstance(congratulationsImageAddress, congratulationImage).loadImage();
+		Log.d("Numbers", "porra B");
 	}
 	
 	public void newExercise(View view) {

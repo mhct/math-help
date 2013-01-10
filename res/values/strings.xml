@@ -3,4 +3,5 @@
     <string name="hello">Hello World</string>
     <string name="app_name">MathHelp 0.1</string>
     <string name="language">en_US</string>
+    <string name="ok">OK !</string>
 </resources>

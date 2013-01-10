@@ -12,6 +12,8 @@ import android.widget.ImageButton;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
+import com.numbers.domain.Exercise;
+
 public class MainActivity extends Activity {
     protected static final int RESULT_SPEECH = 1;
     private static final String MODEL_STATE = "exercise";

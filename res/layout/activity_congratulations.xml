@@ -5,12 +5,19 @@
     android:layout_height="fill_parent"
     android:orientation="vertical"
     tools:context=".MainActivity" >
-
-    <ImageButton
-        android:id="@+id/imageButton1"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:onClick="newExercise" />
         <!--  android:src="@drawable/baloons" /-->
+
+    <ImageView
+        android:id="@+id/imageView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/baloons" />
+
+    <Button
+        android:id="@+id/buttonOk"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="newExercise"
+        android:text="@string/ok" />
 
 </LinearLayout>
