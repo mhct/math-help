@@ -8,27 +8,25 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
-import com.numbers.domain.Exercise;
+import com.numbers.domain.ExerciseSession;
 
 public class MainActivity extends Activity {
     protected static final int RESULT_SPEECH = 1;
     private static final String MODEL_STATE = "exercise";
 	public static final String EXTRA_MESSAGE = "MainActivity";
-    private Exercise exercise;
+    private ExerciseSession exerciseSession;
 	private TextView textView;
-	private ImageButton buttonSpeak;
+//	private ImageButton buttonSpeak;
 	private RatingBar rating;
 	private EditText answerField;
-	private Boolean mistake = Boolean.FALSE;
 
 	/** persists the exercise state **/
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
-		outState.putSerializable(MODEL_STATE, exercise);
+		outState.putSerializable(MODEL_STATE, exerciseSession);
 	}
 	
 	/** Called when the activity is first created. */
@@ -38,9 +36,9 @@ public class MainActivity extends Activity {
         setContentView(R.layout.main);
 
         if(savedInstanceState != null && savedInstanceState.getSerializable(MODEL_STATE) != null) {
-       		this.exercise = (Exercise) savedInstanceState.getSerializable(MODEL_STATE);
+       		this.exerciseSession = (ExerciseSession) savedInstanceState.getSerializable(MODEL_STATE);
         } else {
-        	exercise = Exercise.newInstance();
+        	exerciseSession = ExerciseSession.newInstance();
         }
         
         textView = (TextView) findViewById(R.id.textView);
@@ -51,7 +49,7 @@ public class MainActivity extends Activity {
         rating.setMax(20); //bad, I know.. magic number from the ratingbar conf
         rating.setRating(0.0f);
         
-        textView.setText(exercise.getExercise() + " = ?");
+        textView.setText(exerciseSession.getExercise() + " = ?");
         answerField.setRawInputType(Configuration.KEYBOARD_12KEY);
         answerField.setOnEditorActionListener(new TextView.OnEditorActionListener() {
 
@@ -69,14 +67,13 @@ public class MainActivity extends Activity {
 					}
 
 					answerField.getText().clear();
-					if(exercise.checkResult(answer)) {
+					if(exerciseSession.checkResult(answer)) {
 						animationRightAnswer();
 					} else {
 						animationWrongAnswer();
 					}
 					
-					exercise = Exercise.newInstance();
-					textView.setText(exercise.getExercise());
+					textView.setText(exerciseSession.getExercise());
 					
 					return true;
 				}
@@ -123,9 +120,7 @@ public class MainActivity extends Activity {
      */
     private void animationRightAnswer() {
     	rating.setRating(rating.getRating()+1.0f);
-//    	if(rating.getRating()>=1 && noMistakes() ) {
-    	
-    	if(rating.getRating()>=1) {
+    	if(rating.getRating()>=2 && exerciseSession.noMistakes()) {
     		Intent intent = new Intent(this, CongratulationsActivity.class);
     		startActivity(intent);
     	}
@@ -136,16 +131,8 @@ public class MainActivity extends Activity {
      */
     private void animationWrongAnswer() {
     	rating.setRating(rating.getRating()-1.0f);
-    	setMistake();
     }
     
-    private void setMistake() {
-    	mistake = Boolean.TRUE;
-    }
-    
-    private Boolean noMistakes() {
-    	return ! mistake;
-    }
     
 //	private void handleSpeechReconitionResult(int resultCode, Intent data) {
 //		if(resultCode == RESULT_OK && data != null) {

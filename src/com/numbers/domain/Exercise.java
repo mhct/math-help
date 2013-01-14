@@ -1,10 +1,8 @@
 package com.numbers.domain;
 
 import java.io.Serializable;
-
-import org.apache.commons.math3.random.MersenneTwister;
-import org.apache.commons.math3.random.RandomData;
-import org.apache.commons.math3.random.RandomDataImpl;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -14,31 +12,53 @@ import org.apache.commons.math3.random.RandomDataImpl;
  *
  */
 public class Exercise implements Serializable {
-	/**
-	 * 
-	 */
+
 	private static final long serialVersionUID = 1L;
-	private static final RandomData random = new RandomDataImpl(new MersenneTwister());
 	private int a;
 	private int b;
 	private Operation operation;
+	private long startTime;
+	private List<Attempt> attemptsRecord;
 	
 	private Exercise(int number1, int number2, Operation operation) {
 		this.a = number1;
 		this.b = number2;
 		this.operation = operation;
+		this.attemptsRecord = Lists
 	}
 	
 	public Boolean checkResult(int answer) {
-		if(answer == operation.calculate(a, b)) {
-			return Boolean.TRUE;
-		} else {
-			return Boolean.FALSE;
+		Boolean isCorrectAnswer = Boolean.TRUE;
+		
+		if(answer != operation.calculate(a, b)) {
+			isCorrectAnswer = Boolean.FALSE;
 		}
+
+		addAtempt(timeToSolve(), isCorrectAnswer);
+		
+		return isCorrectAnswer; 
+	}
+
+	private void addAtempt(long timeToSolve, Boolean isCorrectAnswer) {
+		
 	}
 
 	public String getExercise() {
+		startTimeMeasuring();
 		return String.valueOf(a) + " " + operation.toString() + " " + String.valueOf(b);
+	}
+
+	private void startTimeMeasuring() {
+		this.startTime = System.currentTimeMillis();
+	}
+	
+	/**
+	 * Time to solve an exercise, measured in seconds
+	 * 
+	 * @return int, seconds to solve an exercise
+	 */
+	private long timeToSolve() {
+		return System.currentTimeMillis() - startTime/1000;
 	}
 
 	int getA() {
@@ -58,38 +78,9 @@ public class Exercise implements Serializable {
 	 * 
 	 * @return
 	 */
-	public static Exercise newInstance() {
-		int a, b;
-		Operation operation = null;
-		
-		
-		double operationType = random.nextUniform(0.0, 1.0);
-		if(operationType >= 0.80) {
-			operation = Operation.ADDITION;
-		} else if (operationType >= 0.20 ){
-			operation = Operation.MULTIPLICATION;
-		} else {
-			operation = Operation.SUBTRACTION;
-		}
-		
-		if(operation == Operation.SUBTRACTION) { 
-			a = random.nextInt(10, 100);
-			b = random.nextInt(0, a);
-		} else if (operation == Operation.MULTIPLICATION) {
-			a = random.nextInt(6, 9);
-			b = random.nextInt(0, 10);
-			
-			if (random.nextUniform(0.0, 1.0) <= 0.5) {
-				int temp = a;
-				a = b;
-				b = temp;
-			}
-		} else {
-			a = random.nextInt(0, 100);
-			b = random.nextInt(0, 100 - a);
-		}
-		
+	public static Exercise newInstance(int a, int b, Operation operation) {
 		Exercise ex = new Exercise(a, b, operation);
+
 		return ex;
 	}
 }
