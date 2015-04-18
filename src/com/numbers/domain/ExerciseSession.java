@@ -2,9 +2,7 @@ package com.numbers.domain;
 
 import java.io.Serializable;
 
-import org.apache.commons.math3.random.MersenneTwister;
-import org.apache.commons.math3.random.RandomData;
-import org.apache.commons.math3.random.RandomDataImpl;
+import android.util.Log;
 
 
 /**
@@ -18,7 +16,9 @@ public class ExerciseSession implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private static final RandomData random = new RandomDataImpl(new MersenneTwister());
+
+	private static final String TAG = "MathHelp";
+	
 	private SessionStrategy sessionStrategy;
 	private Exercise currentExercise;
 	private Boolean mistake = Boolean.FALSE;
@@ -27,7 +27,7 @@ public class ExerciseSession implements Serializable {
 		this.sessionStrategy = ss;
 	}
 	
-	public Boolean checkResult(int answer) {
+	public Boolean isCorrect(int answer) {
 		if(getCurrentExercise().checkResult(answer)) {
 			return Boolean.TRUE;
 		} else {
@@ -46,6 +46,10 @@ public class ExerciseSession implements Serializable {
 		
 		return String.valueOf(getCurrentExercise().getA()) + " " + getCurrentExercise().getOperation().toString() + " " + String.valueOf(getCurrentExercise().getB());
 	}
+	
+	public int numberOfExercises() {
+		return sessionStrategy.numberOfExercises();
+	}
 
 	private void generateExercise() {
 		this.currentExercise = sessionStrategy.next();
@@ -58,52 +62,15 @@ public class ExerciseSession implements Serializable {
 
 	/**
 	 * creates a new calculation
+	 * @param sessionStrategy TODO
 	 * 
 	 * @return
 	 */
-	public static ExerciseSession newInstance() {
-		SessionStrategy ss = new SessionStrategy() {
-			
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			public Exercise next() {
-				int a, b;
-				Operation operation = null;
-				
-				
-				double operationType = random.nextUniform(0.0, 1.0);
-				if(operationType >= 0.80) {
-					operation = Operation.ADDITION;
-				} else if (operationType >= 0.20 ){
-					operation = Operation.MULTIPLICATION;
-				} else {
-					operation = Operation.SUBTRACTION;
-				}
-				
-				if(operation == Operation.SUBTRACTION) { 
-					a = random.nextInt(10, 100);
-					b = random.nextInt(0, a);
-				} else if (operation == Operation.MULTIPLICATION) {
-					a = random.nextInt(6, 9);
-					b = random.nextInt(0, 10);
-					
-					if (random.nextUniform(0.0, 1.0) <= 0.5) {
-						int temp = a;
-						a = b;
-						b = temp;
-					}
-				} else {
-					a = random.nextInt(0, 100);
-					b = random.nextInt(0, 100 - a);
-				}
-				
-				Exercise ex = Exercise.newInstance(a, b, operation);
-				return ex;
-			}
-		};
-		
-		ExerciseSession es = new ExerciseSession(ss);
+	public static ExerciseSession newInstance(SessionStrategy sessionStrategy) {
+		if (sessionStrategy == null) {
+			Log.d(TAG, "No Exercise Strategy was selected");
+		}
+		ExerciseSession es = new ExerciseSession(sessionStrategy);
 		return es;
 	}
 

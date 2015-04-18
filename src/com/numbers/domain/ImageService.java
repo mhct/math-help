@@ -72,7 +72,7 @@ public class ImageService extends AsyncTask<URL, Void, Bitmap> {
 		if(result != null) {
 			view.setImageBitmap(result);
 		} else {
-			Log.d("Numbers", "result foi NULO PORRA");
+			Log.d("Numbers", "result is NULL");
 		}
 	}
 	

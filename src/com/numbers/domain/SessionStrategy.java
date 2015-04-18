@@ -9,5 +9,6 @@ import java.io.Serializable;
  *
  */
 public interface SessionStrategy extends Serializable {
-	public Exercise next();
+	int numberOfExercises(); //Number of exercises created by this SessionStrategy
+	public Exercise next(); //Retrieves the next exercise
 }

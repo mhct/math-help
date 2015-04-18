@@ -1,8 +1,13 @@
 package com.numbers;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.concurrent.ExecutionException;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -11,7 +16,10 @@ import android.widget.EditText;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
+import com.numbers.domain.DropboxExercisesService;
+import com.numbers.domain.DropboxSessionStrategy;
 import com.numbers.domain.ExerciseSession;
+import com.numbers.domain.ExercisesFileParser;
 
 public class MainActivity extends Activity {
     protected static final int RESULT_SPEECH = 1;
@@ -19,7 +27,6 @@ public class MainActivity extends Activity {
 	public static final String EXTRA_MESSAGE = "MainActivity";
     private ExerciseSession exerciseSession;
 	private TextView textView;
-//	private ImageButton buttonSpeak;
 	private RatingBar rating;
 	private EditText answerField;
 
@@ -38,18 +45,29 @@ public class MainActivity extends Activity {
         if(savedInstanceState != null && savedInstanceState.getSerializable(MODEL_STATE) != null) {
        		this.exerciseSession = (ExerciseSession) savedInstanceState.getSerializable(MODEL_STATE);
         } else {
-        	exerciseSession = ExerciseSession.newInstance();
+        	try {
+				AsyncTask<URL, Void, String> task = new DropboxExercisesService().execute(new URL("https://dl.dropboxusercontent.com/u/4294426/math-examples.csv"));
+				exerciseSession = ExerciseSession.newInstance(DropboxSessionStrategy.newInstance(ExercisesFileParser.getExercises(task.get())));
+			} catch (MalformedURLException e) {
+				Log.e("numbers", e.getMessage());
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ExecutionException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
         }
         
         textView = (TextView) findViewById(R.id.textView);
         answerField = (EditText) findViewById(R.id.editText1);
-//        buttonSpeak = (ImageButton) findViewById(R.id.buttonSpeak);
-        rating = (RatingBar) findViewById(R.id.ratingBar1); 
+        rating = (RatingBar) findViewById(R.id.ratingBar1);
+        rating.setNumStars(exerciseSession.numberOfExercises());
         rating.setIsIndicator(Boolean.TRUE);
-        rating.setMax(20); //bad, I know.. magic number from the ratingbar conf
+        rating.setMax(exerciseSession.numberOfExercises());
         rating.setRating(0.0f);
         
-        textView.setText(exerciseSession.getExercise() + " = ?");
+        showExercise();
         answerField.setRawInputType(Configuration.KEYBOARD_12KEY);
         answerField.setOnEditorActionListener(new TextView.OnEditorActionListener() {
 
@@ -67,13 +85,12 @@ public class MainActivity extends Activity {
 					}
 
 					answerField.getText().clear();
-					if(exerciseSession.checkResult(answer)) {
+					if(exerciseSession.isCorrect(answer)) {
 						animationRightAnswer();
 					} else {
 						animationWrongAnswer();
 					}
-					
-					textView.setText(exerciseSession.getExercise());
+					showExercise();
 					
 					return true;
 				}
@@ -84,43 +101,18 @@ public class MainActivity extends Activity {
         
         Log.d("Numbers", "Language: " + getString(R.string.language));
         
-        
-//        buttonSpeak.setOnClickListener(new View.OnClickListener() {
-//			
-//			@Override
-//			public void onClick(View v) {
-//				Intent speechIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-//				speechIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, getString(R.string.language));
-//				speechIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, getString(R.string.language));
-//				
-//				try {
-//					startActivityForResult(speechIntent, RESULT_SPEECH);
-//				} catch ( ActivityNotFoundException e ) {
-//					Toast t = Toast.makeText(getApplicationContext(), "Device should support speech recognition", Toast.LENGTH_SHORT);
-//					t.show();
-//				}
-//				
-//			}
-//		});
     }
     
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//    	super.onActivityResult(requestCode, resultCode, data);
-//    	
-//    	switch(requestCode) {
-//    	case RESULT_SPEECH: handleSpeechReconitionResult(resultCode, data);
-//    		break;
-//    	default: break;
-//    	}
-//    }
+    private void showExercise() {
+    	textView.setText(exerciseSession.getExercise());
+    }
 
     /**
      * Displays an animation for right answers, increase the score 
      */
     private void animationRightAnswer() {
     	rating.setRating(rating.getRating()+1.0f);
-    	if(rating.getRating()>=2 && exerciseSession.noMistakes()) {
+    	if(rating.getRating()>=exerciseSession.numberOfExercises() && exerciseSession.noMistakes()) {
     		Intent intent = new Intent(this, CongratulationsActivity.class);
     		startActivity(intent);
     	}
@@ -132,44 +124,4 @@ public class MainActivity extends Activity {
     private void animationWrongAnswer() {
     	rating.setRating(rating.getRating()-1.0f);
     }
-    
-    
-//	private void handleSpeechReconitionResult(int resultCode, Intent data) {
-//		if(resultCode == RESULT_OK && data != null) {
-//			ArrayList<String> recognizedText = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-//			
-//			if(recognizedText.size() > 0 ) {
-//				int answer;
-//				String msg = "";
-//				try {
-//					Log.d("Number", "RecognizedText" + recognizedText.toString());
-//					
-//					answer = Integer.valueOf(recognizedText.get(0));
-//
-//					
-//					if(exercise.checkResult(answer)) {
-//						msg = "UHU CERTINHO :)";
-//						animationRightAnswer();
-//					} else {
-//						msg = "pena :(, correto eh: " + String.valueOf(exercise.getAnswer());
-//						
-//						if(rating.getRating() >= 15) {
-//							animationWrongAnswer();
-//						}
-//					}
-//				} catch( NumberFormatException e ) {
-//					msg = "Som RUIM, resposta eh: " + String.valueOf(exercise.getAnswer());
-//				}
-//				
-//				
-//				Toast t = Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT);
-//				t.show();
-//				
-//				exercise = Exercise.newInstance();
-//				textView.setText(exercise.getExercise());
-//			} else {
-//				textView.setText("Speech NOT recognized");
-//			}
-//		}
-//	}
 }

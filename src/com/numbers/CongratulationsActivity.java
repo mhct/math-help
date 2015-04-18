@@ -18,11 +18,11 @@ public class CongratulationsActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_congratulations);
 		
-		String congratulationsImageAddress = "https://dl.dropbox.com/u/4294426/baloons.png";
-		Log.d("Numbers", "porra A");
+		String congratulationsImageAddress = "https://dl.dropbox.com/u/4294426/baloons.jpg";
+		Log.d("Numbers", "A");
 		ImageView congratulationImage = (ImageView) findViewById(R.id.imageView1);
 		ImageService.newInstance(congratulationsImageAddress, congratulationImage).loadImage();
-		Log.d("Numbers", "porra B");
+		Log.d("Numbers", "B");
 	}
 	
 	public void newExercise(View view) {

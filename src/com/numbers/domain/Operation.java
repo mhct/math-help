@@ -1,7 +1,7 @@
 package com.numbers.domain;
 
 public enum Operation {
-	ADDITION{
+	ADD{
 		@Override
 		public int calculate(int a, int b) {
 			return a + b;
@@ -10,7 +10,7 @@ public enum Operation {
 		public String toString() {
 			return "+";
 		}
-	}, SUBTRACTION {
+	}, SUB {
 		@Override
 		public int calculate(int a, int b) {
 			return a - b;
@@ -19,7 +19,7 @@ public enum Operation {
 		public String toString() {
 			return "-";
 		}
-	}, MULTIPLICATION {
+	}, TIMES {
 		@Override
 		public int calculate(int a, int b) {
 			return a * b;
